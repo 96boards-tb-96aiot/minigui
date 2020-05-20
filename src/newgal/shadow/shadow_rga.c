@@ -207,42 +207,4 @@ int yuv_draw(char *src_ptr, int src_fd, int format, int src_w, int src_h) {
     return ret;
 }
 
-int yuv_draw_beiqi(char *src_ptr, int src_fd, int format, int src_w, int src_h) {
-    int ret;
-    rga_info_t src;
-
-    rga_info_t dst;
-    memset(&src, 0, sizeof(rga_info_t));
-    src.fd = -1; //rga_src_fd;
-    src.virAddr = src_ptr;
-    src.mmuFlag = 1;
-
-    memset(&dst, 0, sizeof(rga_info_t));
-    dst.fd = video_fb.fb[video_fb.front_fb ^ 1];
-    dst.mmuFlag = 1;
-
-    //rga_set_rect(&src.rect, 0, 0, src_w, src_h, src_w, src_h, format);
-    //rga_set_rect(&src.rect, 0, 0, src_w, src_h, src_w, src_h, format);
-    rga_set_rect(&src.rect, 200, 0, 240, 480, src_w, src_h, format);
-
-
-    // resize as a rect with src_w and src_h
-    //video_fb.width = src_w;
-    //video_fb.height = src_h;
-    //rga_set_rect(&dst.rect, 0, 0, video_fb.width, video_fb.height, video_fb.width, video_fb.height, RK_FORMAT_YCrCb_420_P);
-    video_fb.width = 240;
-    video_fb.height = 480;
-    rga_set_rect(&dst.rect, 0, 0, video_fb.width, video_fb.height, video_fb.width, video_fb.height, RK_FORMAT_YCrCb_420_P);
-    src.rotation = HAL_TRANSFORM_FLIP_H;
-    // do copy
-    ret = c_RkRgaBlit(&src, &dst, NULL);
-    if (ret)
-        printf("c_RkRgaBlit0 error : %s\n", strerror(errno));
-    else {
-        pthread_mutex_lock(&video_fb.mtx);
-        video_fb.front_fb ^= 1;
-        pthread_mutex_unlock(&video_fb.mtx);
-    }
-    return ret;
-}
 #endif
