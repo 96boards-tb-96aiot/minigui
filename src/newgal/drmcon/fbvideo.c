@@ -58,9 +58,6 @@
 #include "sysvideo.h"
 #include "pixels_c.h"
 #include "fbvideo.h"
-#include "fb3dfx.h"
-#include "fbmatrox.h"
-#include "fbneomagic.h"
 #include "drm_display.h"
 
 #ifdef _MGGAL_SIGMA8654 
@@ -294,7 +291,7 @@ static int FB_GetFBInfo(VIDEO_MEM_INFO *video_mem_info)
 
 static int FB_VideoInit(_THIS, GAL_PixelFormat *vformat)
 {
-    struct bo bo;
+    struct drm_bo bo;
     int i;
     int w, h;
 
@@ -413,7 +410,7 @@ static GAL_Surface *FB_SetVideoMode(_THIS, GAL_Surface *current,
     char *surfaces_mem;
     int surfaces_len;
 	int w, h;
-	struct bo bo;
+	struct drm_bo bo;
 
 #ifdef _MGRM_PROCESSES
     if (mgIsServer)

@@ -58,9 +58,6 @@
 #include "sysvideo.h"
 #include "pixels_c.h"
 #include "fbvideo.h"
-#include "fb3dfx.h"
-#include "fbmatrox.h"
-#include "fbneomagic.h"
 
 #ifdef _MGGAL_SIGMA8654 
 extern int sigma8654_hdmi_init();
@@ -122,6 +119,11 @@ static void FB_DeleteDevice(GAL_VideoDevice *device)
     free(device);
 }
 
+static void FB_UpdateRects (_THIS, int numrects, GAL_Rect *rects)
+{
+    ioctl(console_fd, FBIOPAN_DISPLAY, &cache_vinfo);
+}
+
 static GAL_VideoDevice *FB_CreateDevice(int devindex)
 {
     GAL_VideoDevice *this;
@@ -157,7 +159,7 @@ static GAL_VideoDevice *FB_CreateDevice(int devindex)
     this->FillHWRect = NULL;
     this->SetHWColorKey = NULL;
     this->SetHWAlpha = NULL;
-    this->UpdateRects = NULL;
+    this->UpdateRects = FB_UpdateRects;
 #if 0
     this->LockHWSurface = FB_LockHWSurface;
     this->UnlockHWSurface = FB_UnlockHWSurface;
